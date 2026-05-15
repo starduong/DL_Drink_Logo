@@ -1,0 +1,306 @@
+# PROMPT TẠO FULL JUPYTER NOTEBOOK TRAIN VGG16 TỪ ĐẦU
+
+Viết cho tôi một FULL dự án Jupyter Notebook (.ipynb) chuyên nghiệp để train mô hình VGG16 cho bài toán phân loại ảnh 6 classes, sử dụng TensorFlow/Keras.
+
+## THÔNG TIN DATASET
+
+Classes:
+
+* 7up
+* coca
+* fanta
+* pepsi
+* red_bull
+* sprite
+
+Số lượng classes: 6
+
+Phân bố dữ liệu:
+
+| Class    | Train | Validation | Test | Total |
+| -------- | ----- | ---------- | ---- | ----- |
+| 7up      | 918   | 196        | 198  | 1312  |
+| coca     | 2515  | 539        | 540  | 3594  |
+| fanta    | 1029  | 220        | 221  | 1470  |
+| pepsi    | 1679  | 359        | 361  | 2399  |
+| red_bull | 840   | 180        | 180  | 1200  |
+| sprite   | 787   | 168        | 170  | 1125  |
+
+Dataset Summary:
+
+* Total Images: 11100
+* Train Images: 7768
+* Validation Images: 1662
+* Test Images: 1670
+
+Image Statistics:
+
+* Image Width Mean: 64.0
+* Image Height Mean: 64.0
+* Brightness Mean: 126.45232965722757
+
+Dataset Mean:
+[0.5745321, 0.46327622, 0.45758863]
+
+Dataset Std:
+[0.21944414, 0.20603594, 0.20709541]
+
+---
+
+# YÊU CẦU QUAN TRỌNG
+
+* KHÔNG sử dụng pretrained weights.
+* VGG16 phải được khởi tạo tham số từ đầu (`weights=None`).
+* Chỉ lấy kiến trúc VGG16 để train.
+* Sử dụng TensorFlow/Keras.
+* Optimizer: AdamW.
+* Train trong 30 epochs.
+* Notebook phải chia cell cực kỳ hợp lý, rõ ràng, chuyên nghiệp.
+* Mỗi giai đoạn phải có markdown title mô tả đẹp mắt.
+* Mỗi cell cần có giải thích ngắn gọn đang làm gì.
+* Có visualize đầy đủ bằng Matplotlib + Seaborn.
+* Notebook phải mang phong cách báo cáo Deep Learning chuyên nghiệp.
+
+---
+
+# CẤU TRÚC NOTEBOOK BẮT BUỘC
+
+## 1. PROJECT HEADER
+
+* Tiêu đề project
+* Mô tả bài toán
+* Dataset overview
+* Objective
+
+---
+
+# 2. IMPORTS & GLOBAL CONFIG
+
+Yêu cầu:
+
+* Import đầy đủ:
+
+  * tensorflow / keras
+  * numpy
+  * pandas
+  * matplotlib
+  * seaborn
+  * sklearn
+  * pathlib
+  * cv2
+* Set random seed
+* Set plotting style đẹp
+* Hiển thị TensorFlow version
+* Check GPU availability
+
+---
+
+# 3. DATA LOADING
+
+Yêu cầu:
+
+DATASET_PATH = "/content/dataset_drink_brand_logo/classification"
+
+TRAIN_DIR = os.path.join(DATASET_PATH, "train")
+VAL_DIR   = os.path.join(DATASET_PATH, "val")
+TEST_DIR  = os.path.join(DATASET_PATH, "test")
+
+
+# 4. gọi VGG16
+
+Yêu cầu:
+* KHÔNG dùng pretrained.
+* `weights=None`
+Yêu cầu:
+
+* In model.summary()
+* Tính tổng params
+* Hiển thị bảng layer architecture
+
+---
+
+# 5. VISUALIZE MODEL ARCHITECTURE
+
+Yêu cầu:
+
+* Dùng:
+
+```python
+plot_model()
+```
+
+* Hiển thị sơ đồ kiến trúc VGG16 theo các khối đẹp mắt.
+* Nếu thiếu graphviz thì tạo fallback architecture diagram bằng matplotlib.
+
+---
+
+# 6. COMPILE MODEL
+
+Yêu cầu:
+
+* Loss:
+
+```python
+categorical_crossentropy
+```
+
+* Metrics:
+
+  * accuracy
+  * precision
+  * recall
+
+* Optimizer:
+
+```python
+AdamW
+```
+
+Learning rate:
+
+```python
+1e-4
+```
+
+---
+
+# 7. CALLBACKS
+
+Thiết lập:
+
+* EarlyStopping
+* ReduceLROnPlateau
+* ModelCheckpoint
+
+Monitor:
+
+```python
+val_loss
+```
+
+---
+
+# 8. TRAINING
+
+Yêu cầu:
+
+* Train 30 epochs
+* Show training logs đầy đủ
+* Save history
+
+Sau training:
+
+* In best validation accuracy
+* In total training time
+
+Lưu best_model_VGG16
+---
+
+# 9. LEARNING CURVES
+
+Vẽ biểu đồ:
+
+* Training vs Validation Loss
+* Training vs Validation Accuracy
+* Learning Rate Schedule
+
+Layout:
+
+* 1 hàng 3 biểu đồ
+
+Style:
+
+* đẹp
+* chuyên nghiệp
+* có legend/grid/title
+
+---
+
+# 10. MODEL EVALUATION
+
+Yêu cầu:
+
+* Evaluate trên test set
+
+* In:
+
+  * test accuracy
+  * precision
+  * recall
+  * f1-score
+
+* Generate classification_report
+
+---
+
+# 11. CONFUSION MATRIX ANALYTICS
+
+Yêu cầu:
+
+* Tạo confusion matrix heatmap
+* Tạo normalized confusion matrix
+* Dùng seaborn heatmap
+
+Layout:
+
+* 2 subplot cạnh nhau
+
+---
+
+# 12. PER-CLASS ANALYTICS
+
+Yêu cầu:
+
+* Precision per class
+* Recall per class
+* F1-score per class
+
+Visualize:
+
+* bar chart đẹp
+* màu chuyên nghiệp
+
+---
+
+# 13. PREDICTION VISUALIZATION
+
+Hiển thị:
+
+* lưới ảnh prediction 5x8
+* Predict vs Actual
+* confidence %
+
+Màu:
+
+* xanh nếu đúng
+* đỏ nếu sai
+
+---
+# 14. Gọi model ra và được thử với 1 ảnh ngoài
+
+# 15. FINAL SUMMARY DASHBOARD
+
+Tạo dashboard cuối:
+
+* best accuracy
+* final loss
+* total params
+* epochs trained
+* training time
+
+Visualize dạng:
+
+* cards / table / summary plot
+
+---
+
+# YÊU CẦU TRÌNH BÀY CODE
+
+* Chia notebook thành nhiều cells hợp lý.
+* Mỗi section có markdown title đẹp.
+* Code phải sạch và chuyên nghiệp.
+* Comment đầy đủ.
+* Visualize phải đẹp như báo cáo nghiên cứu Deep Learning.
+* Không được viết code sơ sài.
+* Notebook phải chạy end-to-end hoàn chỉnh.
+* Trình bày theo phong cách Data Science portfolio chuyên nghiệp.

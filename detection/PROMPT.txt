@@ -1,0 +1,533 @@
+# PROMPT TẠO FULL JUPYTER NOTEBOOK TRAIN FASTER R-CNN TỪ ĐẦU
+
+Viết cho tôi một FULL dự án Jupyter Notebook (.ipynb) chuyên nghiệp để train mô hình Faster R-CNN cho bài toán Object Detection phát hiện logo nước giải khát, sử dụng PyTorch + TorchVision.
+
+## THÔNG TIN DATASET
+
+Dataset Structure:
+
+```text
+dataset_drink_brand_logo/
+└── detection/
+    ├── annotations/
+    │   ├── img_00001.xml
+    │   ├── img_00002.xml
+    │   └── ...
+    ├── images/
+    │   ├── img_00001.jpg
+    │   ├── img_00002.jpg
+    │   └── ...
+    ├── splits/
+    │   ├── train.txt
+    │   ├── val.txt
+    │   └── test.txt
+    ├── meta.txt
+    └── object_distribution.png
+```
+
+Annotation Format:
+
+* Pascal VOC XML
+* Một ảnh có thể chứa nhiều object
+* Bounding box format:
+
+```xml
+<bndbox>
+    <xmin>151</xmin>
+    <xmax>412</xmax>
+    <ymin>203</ymin>
+    <ymax>360</ymax>
+</bndbox>
+```
+
+Object Label:
+
+```text
+logo
+```
+
+Dataset Statistics:
+
+* Total Images: 2980
+* Total XML Files: 2980
+* Total Objects: 5995
+* Average Objects/Image: 2.01
+
+Image Statistics:
+
+* Image Width Mean: 640.0
+* Image Height Mean: 640.0
+* Brightness Mean: 120.19
+
+RGB Statistics:
+
+```python
+Mean Red Channel   : 132.94
+Mean Green Channel : 114.45
+Mean Blue Channel  : 116.27
+```
+
+Dataset Characteristics:
+
+* Detection dataset for beverage logo detection
+* Pascal VOC XML annotations
+* Multiple logos per image
+* Single detection class in XML: `logo`
+* Metadata contains brand-level information:
+
+  * CocaCola
+  * Pepsi
+
+Dataset Split:
+
+* train.txt
+* val.txt
+* test.txt
+
+Mapping Rule:
+
+```python
+image_path = images/<name>.jpg
+xml_path   = annotations/<name>.xml
+```
+
+---
+
+# YÊU CẦU QUAN TRỌNG
+
+* Sử dụng Faster R-CNN.
+* Framework: PyTorch + TorchVision.
+* Backbone:
+
+```python
+fasterrcnn_resnet50_fpn
+```
+
+* KHÔNG sử dụng pretrained COCO weights.
+
+* Model phải khởi tạo từ đầu.
+
+* `weights=None`
+
+* `weights_backbone=None`
+
+* Train detection model end-to-end hoàn chỉnh.
+
+* Optimizer: AdamW.
+
+* Train trong 30 epochs.
+
+* Notebook phải chia cell cực kỳ hợp lý, rõ ràng, chuyên nghiệp.
+
+* Mỗi giai đoạn phải có markdown title mô tả đẹp mắt.
+
+* Mỗi cell cần có giải thích ngắn gọn đang làm gì.
+
+* Có visualize đầy đủ bằng Matplotlib + Seaborn.
+
+* Notebook phải mang phong cách báo cáo Deep Learning chuyên nghiệp.
+
+---
+
+# CẤU TRÚC NOTEBOOK BẮT BUỘC
+
+## 1. PROJECT HEADER
+
+* Tiêu đề project
+* Mô tả bài toán Object Detection
+* Dataset overview
+* Faster R-CNN overview
+* Objective
+
+---
+
+# 2. IMPORTS & GLOBAL CONFIG
+
+Yêu cầu:
+
+* Import đầy đủ:
+
+  * torch
+  * torchvision
+  * numpy
+  * pandas
+  * matplotlib
+  * seaborn
+  * sklearn
+  * pathlib
+  * cv2
+  * albumentations
+  * xml.etree.ElementTree
+
+* Set random seed
+
+* Set plotting style đẹp
+
+* Hiển thị:
+
+  * PyTorch version
+  * TorchVision version
+  * CUDA availability
+  * GPU name
+
+* Enable mixed precision nếu có CUDA
+
+---
+
+# 3. DATA LOADING
+
+Yêu cầu:
+
+```python
+DATASET_PATH = "/content/dataset_drink_brand_logo/detection"
+
+IMAGES_DIR      = os.path.join(DATASET_PATH, "images")
+ANNOTATIONS_DIR = os.path.join(DATASET_PATH, "annotations")
+SPLITS_DIR      = os.path.join(DATASET_PATH, "splits")
+```
+
+Yêu cầu:
+
+* Đọc train.txt / val.txt / test.txt
+* Parse Pascal VOC XML
+* Convert annotations sang format Faster R-CNN:
+
+```python
+target = {
+    "boxes": boxes,
+    "labels": labels,
+    "image_id": image_id,
+    "area": area,
+    "iscrowd": iscrowd
+}
+```
+
+* Class mapping:
+
+```python
+{
+    "background": 0,
+    "logo": 1
+}
+```
+
+* Tạo custom PyTorch Dataset class
+* Tạo DataLoader
+* Viết custom collate_fn cho detection
+
+---
+
+# 4. DATASET VISUALIZATION
+
+Yêu cầu:
+
+* Hiển thị:
+
+  * Sample images
+  * Bounding boxes
+  * Multi-object examples
+
+* Visualize:
+
+  * Object count distribution
+  * Bounding box size distribution
+  * Bounding box aspect ratio
+  * Object area heatmap
+
+* Layout đẹp, chuyên nghiệp
+
+* Có title/grid/color palette
+
+---
+
+# 5. DATA AUGMENTATION
+
+Yêu cầu:
+
+Sử dụng Albumentations:
+
+* Horizontal Flip
+* Random Brightness Contrast
+* Hue Saturation Value
+* ShiftScaleRotate
+* Resize
+
+Yêu cầu:
+
+* Bounding box augmentation compatible
+* Visualize augmentation results trước/sau
+
+---
+
+# 6. BUILD FASTER R-CNN MODEL
+
+Yêu cầu:
+
+* Sử dụng:
+
+```python
+torchvision.models.detection.fasterrcnn_resnet50_fpn
+```
+
+* KHÔNG pretrained
+
+* `weights=None`
+
+* `weights_backbone=None`
+
+* Replace predictor head:
+
+```python
+FastRCNNPredictor
+```
+
+* Number of classes:
+
+```python
+2
+```
+
+(background + logo)
+
+Yêu cầu:
+
+* In model architecture
+* Tính total parameters
+* Tính trainable parameters
+* Hiển thị layer summary
+
+---
+
+# 7. VISUALIZE MODEL ARCHITECTURE
+
+Yêu cầu:
+
+* Visualize Faster R-CNN pipeline:
+
+  * Backbone
+  * FPN
+  * RPN
+  * RoI Pooling
+  * Classification Head
+  * Bounding Box Regressor
+
+* Nếu graphviz lỗi thì tạo custom architecture diagram bằng matplotlib.
+
+* Trình bày đẹp như báo cáo Deep Learning.
+
+---
+
+# 8. LOSS FUNCTION & OPTIMIZER
+
+Yêu cầu:
+
+Optimizer:
+
+```python
+AdamW
+```
+
+Learning rate:
+
+```python
+1e-4
+```
+
+Weight decay:
+
+```python
+1e-4
+```
+
+Yêu cầu:
+
+* Show Faster R-CNN losses:
+
+  * classification loss
+  * box regression loss
+  * objectness loss
+  * RPN box loss
+
+---
+
+# 9. TRAINING CONFIGURATION
+
+Thiết lập:
+
+* Epochs: 30
+* Mixed Precision Training
+* Gradient Clipping
+* Learning Rate Scheduler
+
+Callbacks tương đương:
+
+* Best model saving
+* Early stopping
+* Reduce LR on Plateau
+
+Monitor:
+
+```python
+validation loss
+```
+
+---
+
+# 10. TRAINING LOOP
+
+Yêu cầu:
+
+* Viết full custom training loop cho Faster R-CNN
+
+* Hiển thị:
+
+  * batch loss
+  * epoch loss
+  * validation loss
+  * learning rate
+
+* Dùng tqdm progress bar
+
+Sau training:
+
+* In best validation loss
+* In total training time
+
+Lưu model:
+
+```python
+best_fasterrcnn_logo_detector.pth
+```
+
+---
+
+# 11. LEARNING CURVES
+
+Vẽ biểu đồ:
+
+* Training Loss
+* Validation Loss
+* Learning Rate Schedule
+
+Layout:
+
+* 1 hàng 3 biểu đồ
+
+Style:
+
+* đẹp
+* chuyên nghiệp
+* có legend/grid/title
+
+---
+
+# 12. MODEL EVALUATION
+
+Yêu cầu:
+
+Evaluate trên test set:
+
+* mAP@50
+* Precision
+* Recall
+* IoU
+
+Hiển thị:
+
+* Average IoU
+* Detection confidence statistics
+
+Yêu cầu:
+
+* Sử dụng TorchMetrics hoặc COCOEvaluator
+* In evaluation summary đẹp mắt
+
+---
+
+# 13. DETECTION VISUALIZATION
+
+Hiển thị:
+
+* Ground Truth vs Prediction
+* Bounding boxes
+* Confidence score
+* Correct / missed detections
+
+Layout:
+
+* grid visualization
+* nhiều sample images
+
+Màu:
+
+* Ground truth: xanh lá
+* Prediction: đỏ
+
+---
+
+# 14. CONFIDENCE SCORE ANALYTICS
+
+Yêu cầu:
+
+Visualize:
+
+* Confidence score distribution
+* IoU distribution
+* Detection count per image
+
+Dùng:
+
+* histogram
+* KDE plot
+* boxplot
+
+---
+
+# 15. INFERENCE ON CUSTOM IMAGE
+
+Yêu cầu:
+
+* Upload ảnh ngoài
+* Predict logo detection
+* Draw bounding boxes
+* Show confidence %
+* Cho phép chỉnh threshold
+
+Ví dụ:
+
+```python
+CONFIDENCE_THRESHOLD = 0.5
+```
+
+---
+
+# 16. FINAL SUMMARY DASHBOARD
+
+Tạo dashboard cuối:
+
+* Best validation loss
+* Final mAP@50
+* Average IoU
+* Total parameters
+* Epochs trained
+* Training time
+
+Visualize dạng:
+
+* cards
+* summary table
+* metric dashboard
+
+---
+
+# YÊU CẦU TRÌNH BÀY CODE
+
+* Chia notebook thành nhiều cells hợp lý.
+* Mỗi section có markdown title đẹp.
+* Code phải sạch và chuyên nghiệp.
+* Comment đầy đủ.
+* Visualize phải đẹp như báo cáo nghiên cứu Deep Learning.
+* Không được viết code sơ sài.
+* Notebook phải chạy end-to-end hoàn chỉnh.
+* Trình bày theo phong cách Data Science portfolio chuyên nghiệp.
+* Toàn bộ notebook phải phù hợp phong cách Object Detection research notebook chuyên nghiệp.
